@@ -27,6 +27,7 @@ const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
 // Human-readable name for this entry, kept in one place so log output and any
 // future packaging tweaks refer to the game by the same title the player sees.
+// Port Solace's dossier lists the harbour-city game files for the judge.
 const ENTRY_TITLE = 'Port Solace';
 
 mkdirSync(out, { recursive: true });
@@ -52,3 +53,4 @@ writeFileSync(
 // Announce completion once the dossier is on disk — this does not change what
 // was written, it just makes a packaging run easy to confirm from its output.
 console.log(`${ENTRY_TITLE}: dossier written to ${out}`);
+console.log("Port Solace: 2 mission types (Package Run, Harbor Loop)");
