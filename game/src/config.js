@@ -1,61 +1,16 @@
-// Every tuning number and colour in one place. The playfield is a fixed 1280x720 logical area;
-// the renderer scales it to the window, so no rule below depends on the screen size.
-
-export const FIELD = { width: 1280, height: 720, groundY: 664 };
-
-/** The simulation's fixed step, in seconds: 60 updates a second whatever the display's rate. */
+// Port Solace — tuning & palette. Logical viewport 1280x720, world is a square city.
+export const VIEW = { width: 1280, height: 720 };
 export const STEP = 1 / 60;
-
-export const PLAYER = {
-  width: 72,
-  height: 24,
-  speed: 560,
-  invulnerable: 1.5,
-};
-
-export const LIVES = 3;
-
-export const BLOCK = {
-  minWidth: 40,
-  maxWidth: 110,
-  height: 36,
-  speed: 240,
-  speedPerLevel: 30,
-  speedJitter: 90,
-  interval: 0.55,
-  intervalScale: 0.88,
-  minInterval: 0.14,
-  dodgePoints: 1,
-};
-
-export const COIN = {
-  size: 24,
-  speed: 190,
-  speedPerLevel: 14,
-  interval: 1.4,
-  intervalJitter: 0.8,
-  points: 10,
-};
-
-/** Seconds of play per level, and the last level: speeds and spawn rates stop growing there. */
-export const LEVEL = { seconds: 12, max: 12 };
-
-/** How many falling things can exist at once; the pool is allocated once, at boot. */
-export const POOL_SIZE = 64;
-
-export const PALETTE = {
-  backdrop: '#11141b',
-  sky: '#1b1f2a',
-  ground: '#2a3040',
-  player: '#4fc3f7',
-  block: '#e5534b',
-  coin: '#f2c94c',
-  panel: '#252b38',
-  text: '#eef1f5',
-  muted: '#8b93a3',
-};
-
+export const WORLD = { size: 2400, block: 480, road: 120 };
+export const PLAYER = { radius: 11, walk: 175, sprint: 265, health: 100 };
+export const CAR = { radius: 16, accel: 520, maxSpeed: 430, reverse: 150, turn: 2.6 };
+export const SAVE_KEY = 'port-solace.save.v1';
 export const FONT = 'system-ui, -apple-system, "Segoe UI", sans-serif';
-
-/** Where the best score is kept between visits (this browser only). */
-export const BEST_KEY = 'block-dodger.best';
+export const PALETTE = {
+  backdrop:'#0d1117', grass:'#2e4a34', sidewalk:'#8f979c', road:'#33373d', roadLine:'#e8c547',
+  text:'#eef1f5', muted:'#aab3bd', panel:'rgba(18,22,32,0.92)',
+  health:'#e5534b', money:'#7bd88a', star:'#f2c94c', marker:'#ffcf40'
+};
+export const PLACES = ['Marina Bakehouse','Harborlight Clinic','Solace Books','Tidepool Gym','Lantern Hotel','Gull Market','Pier Nine Diner','Cedar Garage','Beacon Library','Coral Arcade','Ferry Office','Dune Florist','Anchor Bank','Solace School','Wave Theatre','Kelp Grocer','Compass Cafe','Harbor Chapel','Saltworks','Lookout Tower','Mermaid Laundry','Cobble Bakery','North Depot','South Kiosk','East Print Shop'];
+export const CAR_COLORS = ['#c94f4f','#4f7dc9','#53a06a','#d9a441','#8a6fc9','#d97fb0','#5bb5c4','#c9c9c9'];
+export const BUILDING_COLORS = ['#7a6a58','#5d6d7e','#8a5a4a','#64755a','#75627a','#4f6a72','#93765a','#5a5f7a','#7e5d5d','#667a5e'];

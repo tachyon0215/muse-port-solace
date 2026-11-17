@@ -1,53 +1,32 @@
-// Keyboard and pointer input. Held keys give a steering direction; one-shot presses (start or
-// restart, pause) are queued as bit flags and taken once by the loop, so a press between two
-// frames is never lost and never counted twice.
-
+// Keyboard input: held keys give a movement vector; one-shot presses are queued as flags.
 export const ACTION_CONFIRM = 1;
 export const ACTION_PAUSE = 2;
-
-const LEFT = new Set(['ArrowLeft', 'KeyA']);
-const RIGHT = new Set(['ArrowRight', 'KeyD']);
-const CONFIRM = new Set(['Space', 'Enter']);
-const PAUSE = new Set(['KeyP', 'Escape']);
-
+export const ACTION_INTERACT = 4;
+const CONFIRM = new Set(['Space','Enter']);
+const PAUSE = new Set(['KeyP','Escape']);
+const INTERACT = new Set(['KeyE']);
 export function createInput(target) {
-  let left = false;
-  let right = false;
-  let actions = 0;
-
-  window.addEventListener('keydown', (event) => {
-    if (LEFT.has(event.code)) left = true;
-    else if (RIGHT.has(event.code)) right = true;
-    else if (CONFIRM.has(event.code)) {
-      if (!event.repeat) actions |= ACTION_CONFIRM;
-    } else if (PAUSE.has(event.code)) {
-      if (!event.repeat) actions |= ACTION_PAUSE;
-    } else return;
-    event.preventDefault();
+  const held = new Set(); let actions = 0;
+  window.addEventListener('keydown', (e) => {
+    held.add(e.code);
+    if (CONFIRM.has(e.code)) { if (!e.repeat) actions |= ACTION_CONFIRM; }
+    else if (PAUSE.has(e.code)) { if (!e.repeat) actions |= ACTION_PAUSE; }
+    else if (INTERACT.has(e.code)) { if (!e.repeat) actions |= ACTION_INTERACT; }
+    else if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD','ShiftLeft','ShiftRight'].includes(e.code)) return;
+    e.preventDefault();
   });
-  window.addEventListener('keyup', (event) => {
-    if (LEFT.has(event.code)) left = false;
-    else if (RIGHT.has(event.code)) right = false;
-  });
-  // A key released while the tab is hidden never sends keyup: let go of everything on blur.
-  window.addEventListener('blur', () => {
-    left = false;
-    right = false;
-  });
-  target.addEventListener('pointerdown', () => {
-    actions |= ACTION_CONFIRM;
-  });
-
+  window.addEventListener('keyup', (e) => held.delete(e.code));
+  window.addEventListener('blur', () => held.clear());
+  if (target) target.addEventListener('pointerdown', () => { actions |= ACTION_CONFIRM; });
   return {
-    /** -1 for left, 1 for right, 0 for neither or both. */
-    direction() {
-      return (right ? 1 : 0) - (left ? 1 : 0);
+    vector() {
+      const x = (held.has('KeyD')||held.has('ArrowRight')?1:0) - (held.has('KeyA')||held.has('ArrowLeft')?1:0);
+      const y = (held.has('KeyS')||held.has('ArrowDown')?1:0) - (held.has('KeyW')||held.has('ArrowUp')?1:0);
+      return { x, y };
     },
-    /** The one-shot presses since the last call, as ACTION_* flags. */
-    takeActions() {
-      const taken = actions;
-      actions = 0;
-      return taken;
-    },
+    sprint() { return held.has('ShiftLeft')||held.has('ShiftRight'); },
+    takeActions() { const t = actions; actions = 0; return t; },
+    // Non-consuming peek used by main to route E to exactly one fixed step.
+    drainInteract() { if (actions & ACTION_INTERACT) { actions &= ~ACTION_INTERACT; return true; } return false; },
   };
 }
